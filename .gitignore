@@ -1,0 +1,4 @@
+*.out
+*.exe
+.vscode/
+error bad alloc.JPG
