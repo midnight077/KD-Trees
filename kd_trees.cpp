@@ -170,10 +170,11 @@ public:
     }
 };
 
-vector<Point> generateTestData(int n, int k, double minVal = -50.0, double maxVal = 50.0) {
+vector<Point> generateTestData(int n, int k, vector<int> &rarr ,int idx ,double minVal = -10.0, double maxVal = 10.0) {
+    // vector<int> rarr = {1,4,7,9,10,23,34,67,89,21,54,69,75};
     vector<Point> points;
     random_device rd;
-    mt19937 gen(rd()); // Fixed seed for reproducible results
+    mt19937 gen(rarr[idx]); // Fixed seed for reproducible results
     uniform_real_distribution<double> dis(minVal, maxVal);
     
     for (int i = 0; i < n; i++) {
@@ -182,15 +183,15 @@ vector<Point> generateTestData(int n, int k, double minVal = -50.0, double maxVa
             coords[j] = dis(gen);
         }
         points.push_back(Point(coords));
-    }
-    
+    }  
     return points;
 }
 
 // Function to generate a random query point
-Point generateQueryPoint(int k, double minVal = -10.0, double maxVal = 10.0) {
+Point generateQueryPoint(int k,vector<int> & rarr, int idx, double minVal = -10.0, double maxVal = 10.0) {
+    // vector<int> rarr = {2,5,11,10,93,6,23,26,89,35,43,51,54,65,69};
     random_device rd;
-    mt19937 gen(rd()); // Different seed for query point
+    mt19937 gen(rarr[idx+1]); // Different seed for query point
     uniform_real_distribution<double> dis(minVal, maxVal);
     
     vector<double> coords(k);
@@ -238,123 +239,75 @@ void writeDataToCSV(int n, int k, int height, int time ,const string& filename )
 }
 
 int main() {
-    int n, k=2;
-    
-    cout << "Enter number of points (n): ";
-    cin >> n;
+    vector<int> garr;
+    for(int i=0;i<= 200;i++){
+        garr.push_back(i);
+    }
 
+    int n=1000000;
+    
+    // cout << "Enter number of points (n): ";
+    // cin >> n;
     // cout << "Enter number of dimensions (k): ";
     // cin >> k;
-    for(int i =0; i<10; i++){
 
-        vector<Point> points = generateTestData(n,k);
-        
-        // cout << "Enter " << n << " points (each point should have " << k << " coordinates):" << endl;
-        // for (int i = 0; i < n; i++) {
-        //     vector<double> coords(k);
-        //     cout << "Point " << i + 1 << ": ";
-        //     for (int j = 0; j < k; j++) {
-        //         cin >> coords[j];
-        //     }
-        //     points.push_back(Point(coords));
-        // }
-        
-        // Build k-d tree
-        KDTree tree(k);
+    for(int itr = 0 ; itr<10;itr++){
+        int k=2;
+        for(int i =0; i<10; i++){
     
-        auto startBuildTime = chrono::high_resolution_clock::now();
-        tree.build(points);
-        auto stopBuildTime = chrono::high_resolution_clock::now();
-        auto durationBuildTime = chrono::duration_cast<chrono::microseconds>(stopBuildTime - startBuildTime);
-        cout<<durationBuildTime.count();
-        cout << "\nK-D Tree built successfully!" << endl;
+            int idx = (itr*10) + i;
+            vector<Point> points = generateTestData(n,k,garr,idx );
         
-        // Optional: Print tree structure
-        // char choice;
-        // cout << "Do you want to see the tree structure? (y/n): ";
-        // cin >> choice;
-        // if (choice == 'y' || choice == 'Y') {
-        //     tree.printTree();
-        // }
-    
-    
-        int h = tree.getHeight();
-        cout << "height of kd tree : "<<h<<endl<<endl;
-    
-        writeDataToCSV(n,k,h,durationBuildTime.count(), "median_based.csv");
+            // Build k-d tree
+            KDTree tree(k);
         
-        // Get query point
-        // vector<double> queryCoords(k);
-        // cout << "\nEnter the query point (" << k << " coordinates): ";
-        // for (int j = 0; j < k; j++) {
-        //     cin >> queryCoords[j];
-        // }
-        Point queryPoint= generateQueryPoint(k);
-    
-        Point brute_force = bruteForceNearestNeighbor(points , queryPoint);
-        cout<<"Brute force solution - ";
-        brute_force.print();
-        
-        // Find nearest neighbor
-        try {
-            auto st = chrono::high_resolution_clock::now();
-            Point nearest = tree.findNearestNeighbor(queryPoint);
-            auto stopt = chrono::high_resolution_clock::now();
-            auto dt = chrono::duration_cast<chrono::microseconds>(stopt - st);
+            auto startBuildTime = chrono::high_resolution_clock::now();
+            tree.build(points);
+            auto stopBuildTime = chrono::high_resolution_clock::now();
+            auto durationBuildTime = chrono::duration_cast<chrono::milliseconds>(stopBuildTime - startBuildTime);
+            cout<<durationBuildTime.count();
+            cout << "\nK-D Tree built successfully!" << endl;
 
-            writeDataToCSV(n,k,h,dt.count(),"median_based_find_point.csv");
+            // cout<<endl<<endl;
+            // tree.printTree();
+            // cout<<endl<<endl;
+        
+            int h = tree.getHeight();
+            cout << "height of kd tree : "<<h<<endl<<endl;
+        
+            writeDataToCSV(n,k,h,durationBuildTime.count(), "median_based.csv");
             
-            cout << "\n=== RESULT ===" << endl;
-            cout << "Query point: ";
-            // queryPoint.print();
-            cout << endl;
+            Point queryPoint= generateQueryPoint(k, garr, idx);
             
-            cout << "Nearest neighbor: ";
-            // nearest.print();
-            cout << endl;
-            cout << "Distance: " << fixed << setprecision(4) 
-                 << queryPoint.distance(nearest) << endl;
-        }
-        catch (const exception& e) {
-            cout << "Error: " << e.what() << endl;
-        }
-        k = k*2;
-    }    
+            // Point brute_force = bruteForceNearestNeighbor(points , queryPoint);
+            // cout<<"Brute force solution - ";
+            // brute_force.print();
+            
+            // Find nearest neighbor
+            try {
+                auto st = chrono::high_resolution_clock::now();
+                Point nearest = tree.findNearestNeighbor(queryPoint);
+                auto stopt = chrono::high_resolution_clock::now();
+                auto dt = chrono::duration_cast<chrono::microseconds>(stopt - st);
+    
+                writeDataToCSV(n,k,h,dt.count(),"median_based_find_point.csv");
+                
+                // cout << "\n=== RESULT ===" << endl;
+                // cout << "Query point: ";
+                // // queryPoint.print();
+                // cout << endl;
+                
+                // cout << "Nearest neighbor: ";
+                // // nearest.print();
+                // cout << endl;
+                // cout << "Distance: " << fixed << setprecision(4) 
+                //      << queryPoint.distance(nearest) << endl;
+            }
+            catch (const exception& e) {
+                cout << "Error: " << e.what() << endl;
+            }
+            k = k*2;
+        }    
+    }
     return 0;
 }
-
-/*
-Example usage:
-
-Input:
-Enter number of dimensions (k): 2
-Enter number of points (n): 5
-Enter 5 points (each point should have 2 coordinates):
-Point 1: 2 3
-Point 2: 5 4
-Point 3: 9 6
-Point 4: 4 7
-Point 5: 8 1
-
-Enter the query point (2 coordinates): 6 5
-
-Output:
-Query point: (6.00, 5.00)
-Nearest neighbor: (5.00, 4.00)
-Distance: 1.4142
-
-The algorithm now works by:
-1. Building a k-d tree by recursively splitting points using MEAN along alternating axes
-2. For each level, it calculates the mean value along the current axis
-3. Selects the point closest to the mean as the splitting node
-4. Divides remaining points: left subtree gets points <= mean, right subtree gets points > mean
-5. For nearest neighbor search, it traverses the tree intelligently, pruning branches
-   that cannot contain a closer point than the current best
-6. Uses Euclidean distance for measuring proximity between points
-
-Key differences from median-based approach:
-- Mean-based splitting can create unbalanced trees if data is not uniformly distributed
-- Points are split based on mean value rather than exact middle position
-- The splitting node is chosen as the point closest to the calculated mean
-- This approach may lead to different tree structures and potentially different performance characteristics
-*/
