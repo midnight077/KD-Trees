@@ -283,9 +283,9 @@ int main() {
             cout<<durationBuildTime.count();
             cout << "\nK-D Tree built successfully!" << endl;
             
-            cout<<endl<<endl;
-            tree.printTree();
-            cout<<endl<<endl;
+            // cout<<endl<<endl;
+            // tree.printTree();
+            // cout<<endl<<endl;
 
             int h = tree.getHeight();
             cout << "height of kd tree : "<<h<<endl<<endl;
