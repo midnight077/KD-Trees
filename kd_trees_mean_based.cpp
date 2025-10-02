@@ -305,7 +305,7 @@ int main() {
                 auto st = chrono::high_resolution_clock::now();
                 Point nearest = tree.findNearestNeighbor(queryPoint);
                 auto stopt = chrono::high_resolution_clock::now();
-                auto dt = chrono::duration_cast<chrono::nanoseconds>(stopt - st);
+                auto dt = chrono::duration_cast<chrono::milliseconds>(stopt - st);
     
                 writeDataToCSV(n,k,h,dt.count(),"mean_based_find_point.csv");
                 
