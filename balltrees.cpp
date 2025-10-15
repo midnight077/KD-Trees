@@ -362,87 +362,6 @@ public:
 //     }
 // };
 
-// Main application class
-class BallTreeApp {
-private:
-    int n, k;
-    vector<Point> points;
-    BallTree* tree;
-
-
-    void inputParameters() {
-        // cout << "\nEnter number of points (n): ";
-        // cin >> n;
-        n=1000000;
-        // cout << "Enter dimension of each point (k): ";
-        // cin >> k;
-        
-        if (n <= 0 || k <= 0) {
-            cout << "Invalid input! n and k must be positive." << endl;
-            exit(1);
-        }
-    }
-    
-    void generatePoints() {
-        cout << "\nGenerating " << n << " random " << k 
-             << "-dimensional points..." << endl;
-        
-        points = generator.generate(n, k);
-        
-        cout << "\nSample of generated points (first 5):" << endl;
-        for (int i = 0; i < min(5, n); i++) {
-            cout << "Point " << i << ": ";
-            points[i].print();
-            cout << endl;
-        }
-    }
-    
-    void buildAndPrintTree() {
-        tree->build(points);
-        tree->print();
-    }
-    
-    Point inputQueryPoint() {
-        cout << "\n========================================" << endl;
-        cout << "Enter query point (" << k << " dimensions):" << endl;
-        
-        Point query(k);
-        for (int i = 0; i < k; i++) {
-            cout << "Dimension " << i << ": ";
-            cin >> query[i];
-        }
-        
-        return query;
-    }
-    
-    void findAndDisplayNearest(const Point& query) {
-        
-    }
-public:
-    BallTreeApp() : tree(nullptr) {}
-    
-    ~BallTreeApp() {
-        delete tree;
-    }
-    
-    void run() {
-        cout << "========================================" << endl;
-        cout << "   Ball Tree Implementation in C++" << endl;
-        cout << "========================================" << endl;
-        
-        inputParameters();
-        
-        generatePoints();
-        
-        buildAndPrintTree();
-        
-        Point query = inputQueryPoint();
-        
-        findAndDisplayNearest(query);
-    }
-
-    
-};
 
 // helper finctions
 vector<Point> generateTestData(int n, int k, vector<int> &rarr ,int idx ,double minVal = -10.0, double maxVal = 10.0) {
@@ -510,7 +429,7 @@ int main() {
             int idx = (itr*10) + i;
             vector<Point> points = generateTestData(n,k,garr,idx );
 
-            BallTree tree(k,n/10);
+            BallTree tree(k,100000);
             auto startBuildTime = chrono::high_resolution_clock::now();
             tree.build(points);
             auto stopBuildTime = chrono::high_resolution_clock::now();
