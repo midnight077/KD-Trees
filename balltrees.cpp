@@ -291,8 +291,8 @@ public:
         }
         
         root = buildTree(points);
-        cout << "\nBall Tree built successfully with " << points.size() 
-             << " points!" << endl;
+        // cout << "\nBall Tree built successfully with " << points.size() 
+            //  << " points!" << endl;
     }
     
     // Print the entire tree structure
@@ -451,6 +451,7 @@ int main() {
             catch (const exception& e) {
                 cout << "Error: " << e.what() << endl;
             }
+            k=k*2;
         }
     }
             
