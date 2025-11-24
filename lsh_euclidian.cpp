@@ -232,8 +232,8 @@ public:
         // cout << "\nCandidates from LSH buckets: {";
         bool first = true;
         for (const auto& cand : candidates) {
-            if (!first) cout << ", ";
-            cout << cand.first;
+            // if (!first) cout << ", ";
+            // cout << cand.first;
             first = false;
             
             double dist = dataPoints[cand.first].distance(query);
@@ -324,15 +324,15 @@ int main() {
     cout << "=== Locality Sensitive Hashing (LSH) for Nearest Neighbor Search ===" << endl;
     cout << "================================================================\n" << endl;
     
-    int n=100;
+    int n=1000000;
     vector<int> garr;
     for(int i=0;i<= 200;i++){
         garr.push_back(i);
     }
 
-    for(int itr = 0 ; itr<1;itr++){
-        int k=5;
-        for(int i =0; i<1; i++){
+    for(int itr = 0 ; itr<10;itr++){
+        int k=2;
+        for(int i =0; i<10; i++){
             // cout << "\nGenerating " << n << " random " << endl;
 
             int idx = (itr*10) + i;
@@ -349,8 +349,8 @@ int main() {
             
             // Step 3: Create LSH structure and build hash tables
             int L = 5;  // Number of hash tables
-            int numHashes = 2;  // Number of hash functions per table
-            double binWidth = 10.0;  // Bin width for hashing
+            int numHashes = 4;  // Number of hash functions per table
+            double binWidth = 5.0;  // Bin width for hashing
             
             // cout << "\n--- Building LSH Structure ---" << endl;
             // cout << "Number of hash tables (L): " << L << endl;
@@ -416,6 +416,7 @@ int main() {
             // } else {
             //     cout << "LSH found an approximate neighbor (may not be exact)" << endl;
             // }
+            k=k*2;
         }
     }
     
