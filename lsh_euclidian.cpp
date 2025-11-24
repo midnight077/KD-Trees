@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
+#include <chrono>
+#include<fstream>
 
 using namespace std;
 
@@ -227,7 +229,7 @@ public:
         int nearestIdx = -1;
         double minDistance = numeric_limits<double>::max();
         
-        cout << "\nCandidates from LSH buckets: {";
+        // cout << "\nCandidates from LSH buckets: {";
         bool first = true;
         for (const auto& cand : candidates) {
             if (!first) cout << ", ";
@@ -302,7 +304,21 @@ Point generateQueryPoint(int k,vector<int> & rarr, int idx, double minVal = -10.
     return Point(coords);
 }
 
-
+void writeDataToCSV(int n, int dim, int L, int k, int time ,const string& filename ) {
+    ifstream inFile(filename);
+    bool fileExists = inFile.good();
+    inFile.close();
+    
+    ofstream outFile(filename, ios::app);  // Open in append mode
+    
+    if (!fileExists) {
+        // Write header only if file is newly created
+        outFile << "Number_of_Points,Dimensions,Time,No_of_HashTables,Hashes_per_table \n";
+    }
+    
+    outFile << n << "," << dim << "," << time <<"," << L <<","<<k<< "\n";
+    outFile.close();
+}
 
 int main() {
     cout << "=== Locality Sensitive Hashing (LSH) for Nearest Neighbor Search ===" << endl;
@@ -324,7 +340,7 @@ int main() {
 
             // vector<Point> points = generateRandomPoints(n, k);
             
-            cout << "\nGenerated Points:" << endl;
+            // cout << "\nGenerated Points:" << endl;
             // for (int i = 0; i < n; i++) {
             //     cout << "Point " << i << ": ";
             //     points[i].print();
@@ -342,41 +358,55 @@ int main() {
             // cout << "Bin width: " << binWidth << endl;
             
             LSH lsh(L, numHashes, k, binWidth);
+            auto startBuildTime = chrono::high_resolution_clock::now();
             lsh.addPoints(points);
+            auto stopBuildTime = chrono::high_resolution_clock::now();
+            auto durationBuildTime = chrono::duration_cast<chrono::milliseconds>(stopBuildTime - startBuildTime);
+            cout<<durationBuildTime.count();
+            cout << "\nLSH built successfully!" << endl;
+
+            writeDataToCSV(n,k,L,numHashes,durationBuildTime.count(), "lsh_euclidean.csv");
+
             
             // Print bucket information
             // lsh.printAllBuckets();
             
             // Step 4: Input query point
-            cout << "\n\n=== Query Point ===" << endl;
+            // cout << "\n\n=== Query Point ===" << endl;
             Point queryPoint = generateQueryPoint(k, garr, idx);
-            cout << "Query point: ";
-            queryPoint.print();
-            cout << endl;
+            // cout << "Query point: ";
+            // queryPoint.print();
+            // cout << endl;
             
             // Step 5: Find nearest neighbor
-            cout << "\n--- Finding Nearest Neighbor using LSH ---" << endl;
+            // cout << "\n--- Finding Nearest Neighbor using LSH ---" << endl;
+               
+            auto st = chrono::high_resolution_clock::now();
             auto result = lsh.findNearestNeighbor(queryPoint);
+            auto stopt = chrono::high_resolution_clock::now();
+            auto dt = chrono::duration_cast<chrono::microseconds>(stopt - st);
+            writeDataToCSV(n,k,L,numHashes,dt.count(),"lsh_find_point.csv");
+            cout<<dt.count();
             
             if (result.first == -1) {
                 cout << "Error: Could not find nearest neighbor!" << endl;
-                return 1;
+                continue;
             }
             
-            cout << "\nNearest Neighbor: Point " << result.first << " -> ";
-            lsh.getPoint(result.first).print();
-            cout << endl;
+            // cout << "\nNearest Neighbor: Point " << result.first << " -> ";
+            // lsh.getPoint(result.first).print();
+            // cout << endl;
             
-            // Step 6: Print distance
-            cout << "\n--- Distance Calculation ---" << endl;
-            cout << "Distance between query point and nearest neighbor: " 
-                << fixed << setprecision(4) << result.second << endl;
+            // // Step 6: Print distance
+            // cout << "\n--- Distance Calculation ---" << endl;
+            // cout << "Distance between query point and nearest neighbor: " 
+            //     << fixed << setprecision(4) << result.second << endl;
             
-            // Verification with linear search
-            cout << "\n--- Verification (Linear Search) ---" << endl;
-            auto trueResult = lsh.linearSearchNearest(queryPoint);
-            cout << "True Nearest Neighbor: Point " << trueResult.first << " -> ";
-            lsh.getPoint(trueResult.first).print();
+            // // Verification with linear search
+            // cout << "\n--- Verification (Linear Search) ---" << endl;
+            // auto trueResult = lsh.linearSearchNearest(queryPoint);
+            // cout << "True Nearest Neighbor: Point " << trueResult.first << " -> ";
+            // lsh.getPoint(trueResult.first).print();
             cout << endl;
             // cout << "True Minimum Distance: " << fixed << setprecision(4) 
             //     << trueResult.second << endl;
