@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <chrono>
 #include<fstream>
+#include<string>
 
 using namespace std;
 
@@ -365,8 +366,9 @@ int main() {
             cout<<durationBuildTime.count();
             cout << "\nLSH built successfully!" << endl;
 
-            writeDataToCSV(n,k,L,numHashes,durationBuildTime.count(), "lsh_euclidean.csv");
-
+            string build_file_name = "lsh_build_Lkw"+ to_string(L) + to_string(numHashes) + to_string(binWidth) + ".csv";
+            writeDataToCSV(n,k,L,numHashes,durationBuildTime.count(), build_file_name);
+            
             
             // Print bucket information
             // lsh.printAllBuckets();
@@ -380,14 +382,16 @@ int main() {
             
             // Step 5: Find nearest neighbor
             // cout << "\n--- Finding Nearest Neighbor using LSH ---" << endl;
-               
+            
             auto st = chrono::high_resolution_clock::now();
             auto result = lsh.findNearestNeighbor(queryPoint);
             auto stopt = chrono::high_resolution_clock::now();
             auto dt = chrono::duration_cast<chrono::microseconds>(stopt - st);
-            writeDataToCSV(n,k,L,numHashes,dt.count(),"lsh_find_point.csv");
             cout<<dt.count();
             
+            string find_file_name = "lsh_find_Lkw"+ to_string(L) + to_string(numHashes) + to_string(binWidth) + ".csv";
+            writeDataToCSV(n,k,L,numHashes,dt.count(),find_file_name);
+
             if (result.first == -1) {
                 cout << "Error: Could not find nearest neighbor!" << endl;
                 continue;
