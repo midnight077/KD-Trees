@@ -4,3 +4,5 @@
 error bad alloc.JPG
 temp.cpp
 out
+dataset/DB/*
+dataset/Query/*

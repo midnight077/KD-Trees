@@ -7,55 +7,9 @@
 #include <iomanip>
 #include<fstream>
 #include<chrono>
+#include "utils.hpp"
 
 using namespace std;
-
-// Class to represent a k-dimensional point
-class Point {
-private:
-    vector<double> coords;
-    int id;
-
-public:
-    Point() : id(-1) {}
-    
-    Point(int dim, int pointId = -1) : coords(dim), id(pointId) {}
-    
-    Point(const vector<double>& c, int pointId = -1) : coords(c), id(pointId) {}
-    
-    int getDimension() const { return coords.size(); }
-    
-    double operator[](int idx) const { return coords[idx]; }
-    
-    double& operator[](int idx) { return coords[idx]; }
-    
-    int getId() const { return id; }
-    
-    void setId(int pointId) { id = pointId; }
-    
-    // Calculate Euclidean distance to another point
-    double distanceTo(const Point& other) const {
-        double sum = 0.0;
-        for (int i = 0; i < coords.size(); i++) {
-            double diff = coords[i] - other.coords[i];
-            sum += diff * diff;
-        }
-        return sqrt(sum);
-    }
-    
-    // Print the point
-    void print() const {
-        cout << "(";
-        for (int i = 0; i < coords.size(); i++) {
-            cout << fixed << setprecision(3) << coords[i];
-            if (i < coords.size() - 1) cout << ", ";
-        }
-        cout << ")";
-    }
-    
-    // Get coordinates vector
-    const vector<double>& getCoords() const { return coords; }
-};
 
 // Class to represent a Ball (hypersphere) containing points
 class Ball {
@@ -410,51 +364,4 @@ void writeDataToCSV(int n, int k, int time ,const string& filename ) {
     
     outFile << n << "," << k << "," << time << "\n";
     outFile.close();
-}
-
-int main() {
-    // BallTreeApp app;
-    // app.run();
-
-    vector<int> garr;
-    for(int i=0;i<= 200;i++){
-        garr.push_back(i);
-    }
-
-    int n=1000000;
-
-    for(int itr = 0 ; itr<10;itr++){
-        int k=2;
-        for(int i =0; i<10; i++){
-            int idx = (itr*10) + i;
-            vector<Point> points = generateTestData(n,k,garr,idx );
-
-            BallTree tree(k,100000);
-            auto startBuildTime = chrono::high_resolution_clock::now();
-            tree.build(points);
-            auto stopBuildTime = chrono::high_resolution_clock::now();
-            auto durationBuildTime = chrono::duration_cast<chrono::milliseconds>(stopBuildTime - startBuildTime);
-            cout<<durationBuildTime.count();
-            cout << "\n ball Tree built successfully!" << endl;
-
-            // height
-            writeDataToCSV(n,k,durationBuildTime.count(), "ball_tree.csv");
-            Point queryPoint= generateQueryPoint(k, garr, idx);
-            try {
-                auto st = chrono::high_resolution_clock::now();
-                Point nearest = tree.findNearestNeighbor(queryPoint);
-                auto stopt = chrono::high_resolution_clock::now();
-                auto dt = chrono::duration_cast<chrono::microseconds>(stopt - st);
-    
-                writeDataToCSV(n,k,dt.count(),"ball_tree_find_point.csv");
-            }
-            catch (const exception& e) {
-                cout << "Error: " << e.what() << endl;
-            }
-            k=k*2;
-        }
-    }
-            
-    
-    return 0;
 }
