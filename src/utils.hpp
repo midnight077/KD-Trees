@@ -131,7 +131,7 @@ void saveTestDataToFile(const string& filename, int n, int k, vector<Point> & po
     }
     
     file.close();
-    cout << "Saved " << n << " points to " << filename << endl;
+    cout << "Generated and Saved " << n << " points to " << filename << endl;
 }
 
 // Function to load points from a file into a vector<Point>
