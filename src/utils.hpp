@@ -166,7 +166,12 @@ bool fileExists(const string& filename) {
     return file.good();
 }
 
-void writeComparisonToCSV(const string& filename, const Point& queryPoint,const Point& lshPoint, const Point& kdPoint, double difference,bool writeHeader = false) {
+void writeComparisonToCSV(const string& filename, int index, double lsh_dist, double kd_dist) {
+
+    ifstream inFile(filename);
+    bool fileExist = inFile.good();
+    inFile.close();
+    
     ofstream file;
     
     // Open in append mode
@@ -178,26 +183,26 @@ void writeComparisonToCSV(const string& filename, const Point& queryPoint,const 
     }
     
     // Write header if needed
-    if (writeHeader) {
-        file << "QueryPoint,LSH_NearestNeighbor,KD_NearestNeighbor,Difference" << endl;
+    if (!fileExist) {
+        file << "index,LSH_Distance,KD_Distance,Difference" << endl;
     }
     
     // Helper lambda to format point as string
-    auto pointToString = [](const Point& p) -> string {
-        string result = "(";
-        for (size_t i = 0; i < p.coordinates.size(); i++) {
-            result += to_string(p[i]);
-            if (i < p.coordinates.size() - 1) result += ";";
-        }
-        result += ")";
-        return result;
-    };
-    
+    // auto pointToString = [](const Point& p) -> string {
+    //     string result = "(";
+    //     for (size_t i = 0; i < p.coordinates.size(); i++) {
+    //         result += to_string(p[i]);
+    //         if (i < p.coordinates.size() - 1) result += ";";
+    //     }
+    //     result += ")";
+    //     return result;
+    // };
+    double difference = lsh_dist - kd_dist;
     // Write data row
-    file << pointToString(queryPoint) << ","
-         << pointToString(lshPoint) << ","
-         << pointToString(kdPoint) << ","
-         << fixed << setprecision(6) << difference << endl;
+    file << index << ","
+         << fixed << setprecision(3) << lsh_dist << ","
+         << fixed << setprecision(3) << kd_dist << ","
+         << fixed << setprecision(3) << difference << endl;
     
     file.close();
 }

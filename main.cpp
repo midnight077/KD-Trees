@@ -15,10 +15,10 @@
 using namespace std;
 
 struct ComparisonResult {
-    Point queryPoint;
-    Point lshPoint;
-    Point kdPoint;
-    double difference;
+    int index;
+    double lsh_dist;
+    double kd_dist;
+    string filename;
 };
 
 int main(){
@@ -70,14 +70,19 @@ int main(){
         // nearest_lsh.print();
         Point nearest_kd = tree.findNearestNeighbor(query_point[i]);
         // nearest_kd.print();
-        double difference = nearest_lsh.distance(nearest_kd);
-
-        results[i] = {query_point[i], nearest_lsh, nearest_kd, difference};
+        double lsh_dist_from_query = query_point[i].distance(nearest_lsh);
+        double kd_dist_from_query = query_point[i].distance(nearest_kd);
+        // string difference_filename =  "./difference.csv";
+        
+        results[i] = {i , lsh_dist_from_query , kd_dist_from_query};
         
     }
-
+    
     for(int i = 0; i < nqp; i++){
-        results[i].lshPoint.print();results[i].kdPoint.print();writeComparisonToCSV("./difference.csv", results[i].queryPoint, results[i].lshPoint, results[i].kdPoint, results[i].difference, i == 0);
+        // results[i].lshPoint.print();
+        // results[i].kdPoint.print();
+        string difference_filename =  "./onlydifference.csv";
+        writeComparisonToCSV(difference_filename, results[i].index, results[i].lsh_dist, results[i].kd_dist);
     }
     
     auto stopTime = chrono::high_resolution_clock::now();
