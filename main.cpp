@@ -11,19 +11,28 @@
 // #include "./src/balltrees.hpp"
 #include "./src/lsh_euclidian.hpp"
 #include "./src/kd_trees.hpp"
+#include "./src/kd_trees_ANN.hpp"
 #include<omp.h>
+
 using namespace std;
 
 struct ComparisonResult {
     int index;
     double lsh_dist;
     double kd_dist;
+    double kdANN_dist;
     string filename;
 };
 
 int main(){
     int n , k , nqp;    // nqp -> number of query points
-    cin>>n>>k>>nqp;
+    cout<<"Input number of query points - ";
+    cin>>n;
+    cout<<endl<<"Input dimensions of each point - ";
+    cin>>k;
+    cout<<endl<<"Input number of query points - ";
+    cin>>nqp;
+    cout<<endl;
 
     vector<int> garr;
     for(int i=0;i<= 10;i++){
@@ -60,6 +69,9 @@ int main(){
     KDTree tree(k);
     tree.build(points);
 
+    KDTreeANN treeANN(k);
+    treeANN.build(points);
+
     auto startTime = chrono::high_resolution_clock::now();
     
     vector<ComparisonResult> results(nqp);
@@ -70,19 +82,23 @@ int main(){
         // nearest_lsh.print();
         Point nearest_kd = tree.findNearestNeighbor(query_point[i]);
         // nearest_kd.print();
+        // kd-ANN
+        Point nearest_kd_ANN = treeANN.findNearestNeighbor(query_point[i]);
+
         double lsh_dist_from_query = query_point[i].distance(nearest_lsh);
         double kd_dist_from_query = query_point[i].distance(nearest_kd);
+        double kdANN_dist_from_query = query_point[i].distance(nearest_kd_ANN);
         // string difference_filename =  "./difference.csv";
         
-        results[i] = {i , lsh_dist_from_query , kd_dist_from_query};
+        results[i] = {i , lsh_dist_from_query , kd_dist_from_query , kdANN_dist_from_query};
         
     }
     
     for(int i = 0; i < nqp; i++){
         // results[i].lshPoint.print();
         // results[i].kdPoint.print();
-        string difference_filename =  "./onlydifference.csv";
-        writeComparisonToCSV(difference_filename, results[i].index, results[i].lsh_dist, results[i].kd_dist);
+        string difference_filename =  "./onlydifference2.csv";
+        writeComparisonToCSV(difference_filename, results[i].index, results[i].lsh_dist, results[i].kd_dist, results[i].kdANN_dist);
     }
     
     auto stopTime = chrono::high_resolution_clock::now();

@@ -166,7 +166,7 @@ bool fileExists(const string& filename) {
     return file.good();
 }
 
-void writeComparisonToCSV(const string& filename, int index, double lsh_dist, double kd_dist) {
+void writeComparisonToCSV(const string& filename, int index, double lsh_dist, double kd_dist, double kdANN_dist) {
 
     ifstream inFile(filename);
     bool fileExist = inFile.good();
@@ -197,12 +197,19 @@ void writeComparisonToCSV(const string& filename, int index, double lsh_dist, do
     //     result += ")";
     //     return result;
     // };
-    double difference = lsh_dist - kd_dist;
+    double difference1 = lsh_dist - kd_dist;
+    double percentage1 = (difference1/kd_dist) * 100;
+    double difference2 = kdANN_dist - kd_dist;
+    double percentage2 = (difference2/kd_dist) * 100;
     // Write data row
     file << index << ","
          << fixed << setprecision(3) << lsh_dist << ","
          << fixed << setprecision(3) << kd_dist << ","
-         << fixed << setprecision(3) << difference << endl;
+         << fixed << setprecision(3) << kdANN_dist << ","
+         << fixed << setprecision(3) << difference1 << ","
+         << fixed << setprecision(3) << percentage1 << ","
+         << fixed << setprecision(3) << difference2 << ","
+         << fixed << setprecision(3) << percentage2 << endl;
     
     file.close();
 }
