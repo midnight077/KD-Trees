@@ -1,3 +1,6 @@
+#ifndef KD_TREES_HPP
+#define KD_TREES_HPP
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -11,33 +14,6 @@
 #include "utils.hpp"
 
 using namespace std;
-
-// class Point {
-// public:
-//     vector<double> coords;
-    
-//     Point() {}
-    
-//     Point(const vector<double>& c) : coords(c) {}
-    
-//     double distance(const Point& other) const {
-//         double dist = 0;
-//         for (size_t i = 0; i < coords.size(); i++) {
-//             double diff = coords[i] - other.coords[i];
-//             dist += diff * diff;
-//         }
-//         return sqrt(dist);
-//     }
-    
-//     void print() const {
-//         cout << "(";
-//         for (size_t i = 0; i < coords.size(); i++) {
-//             cout << fixed << setprecision(2) << coords[i];
-//             if (i < coords.size() - 1) cout << ", ";
-//         }
-//         cout << ")";
-//     }
-// };
 
 class KDNode {
 public:
@@ -310,5 +286,7 @@ public:
 //             k = k*2;
 //         }    
 //     }
+
+#endif // KD_TREES_HPP
 //     return 0;
 // }
