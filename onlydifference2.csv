@@ -1,4 +1,4 @@
-index,LSH_Distance,KD_Distance,Difference
+index,LSH_Distance,KD_Distance,KDANN_Distance,Difference_1,Percentage_1,Difference_2,Percentage_2
 0,599.599,559.892,696.741,39.707,7.092,136.849,24.442
 1,655.866,582.159,653.537,73.706,12.661,71.378,12.261
 2,600.117,583.899,701.296,16.218,2.778,117.397,20.106
