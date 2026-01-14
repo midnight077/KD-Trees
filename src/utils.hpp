@@ -184,7 +184,7 @@ void writeComparisonToCSV(const string& filename, int index, double lsh_dist, do
     
     // Write header if needed
     if (!fileExist) {
-        file << "index,LSH_Distance,KD_Distance,KDANN_Distance,Difference_1,Percentage_1,Difference_2,Percentage_2" << endl;
+        file << "index,LSH_Distance,KD_Distance,KDANN_Distance,Difference_1,Percentage_1,Difference_2,Percentage_2,Difference_3,Percentage_3" << endl;
     }
     
     // Helper lambda to format point as string
