@@ -12,6 +12,7 @@
 #include "./src/lsh_euclidian.hpp"
 #include "./src/kd_trees.hpp"
 #include "./src/kd_trees_ANN.hpp"
+#include "./src/hnsw.hpp"
 #include<omp.h>
 
 using namespace std;
@@ -71,6 +72,10 @@ int main(){
 
     KDTreeANN treeANN(k);
     treeANN.build(points);
+
+    HNSW hnsw(k, 16, 200);  // dimensions, M, efConstruction
+    hnsw.build(points);
+    hnsw.printStats();
 
     auto startTime = chrono::high_resolution_clock::now();
     
