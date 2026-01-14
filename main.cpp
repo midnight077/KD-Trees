@@ -22,6 +22,7 @@ struct ComparisonResult {
     double lsh_dist;
     double kd_dist;
     double kdANN_dist;
+    double hnsw_dist;
     string filename;
 };
 
@@ -90,20 +91,26 @@ int main(){
         // kd-ANN
         Point nearest_kd_ANN = treeANN.findNearestNeighbor(query_point[i]);
 
+        // HNSW
+        Point hnsw_nearest = hnsw.findNearestNeighbor(query_point[i], 50);
+        
+        
+        
         double lsh_dist_from_query = query_point[i].distance(nearest_lsh);
         double kd_dist_from_query = query_point[i].distance(nearest_kd);
         double kdANN_dist_from_query = query_point[i].distance(nearest_kd_ANN);
+        double hnsw_dist_from_query = query_point[i].distance(hnsw_nearest);
         // string difference_filename =  "./difference.csv";
         
-        results[i] = {i , lsh_dist_from_query , kd_dist_from_query , kdANN_dist_from_query};
+        results[i] = {i , lsh_dist_from_query , kd_dist_from_query , kdANN_dist_from_query, hnsw_dist_from_query};
         
     }
     
     for(int i = 0; i < nqp; i++){
         // results[i].lshPoint.print();
         // results[i].kdPoint.print();
-        string difference_filename =  "./onlydifference2.csv";
-        writeComparisonToCSV(difference_filename, results[i].index, results[i].lsh_dist, results[i].kd_dist, results[i].kdANN_dist);
+        string difference_filename =  "./onlydifference3.csv";
+        writeComparisonToCSV(difference_filename, results[i].index, results[i].lsh_dist, results[i].kd_dist, results[i].kdANN_dist, results[i].hnsw_dist);
     }
     
     auto stopTime = chrono::high_resolution_clock::now();
