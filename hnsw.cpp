@@ -3,6 +3,7 @@
 #include <chrono>
 #include "./src/utils.hpp"
 #include "./src/hnsw.hpp"
+#include "./src/hnswParallel.hpp"
 #include "./src/kd_trees.hpp"
 
 using namespace std;
@@ -43,6 +44,16 @@ int main() {
     }
 
     // Build HNSW
+    cout << "Building HNSW Parallel..." << endl;
+    auto startBuildP = chrono::high_resolution_clock::now();
+    
+    HNSWParallel hnswP(k, 16, 200);  // dimensions, M, efConstruction
+    hnswP.build(points);
+    
+    auto stopBuildP = chrono::high_resolution_clock::now();
+    auto buildTimeP = chrono::duration_cast<chrono::milliseconds>(stopBuildP - startBuildP);
+    cout << "HNSW Parallel build time: " << buildTimeP.count() << " ms" << endl;
+
     cout << "Building HNSW..." << endl;
     auto startBuild = chrono::high_resolution_clock::now();
     

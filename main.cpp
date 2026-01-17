@@ -13,6 +13,7 @@
 #include "./src/kd_trees.hpp"
 #include "./src/kd_trees_ANN.hpp"
 #include "./src/hnsw.hpp"
+#include "./src/hnswParallel.hpp"
 #include<omp.h>
 
 using namespace std;
@@ -74,7 +75,11 @@ int main(){
     KDTreeANN treeANN(k);
     treeANN.build(points);
 
-    HNSW hnsw(k, 16, 200);  // dimensions, M, efConstruction
+    // HNSW hnsw(k, 16, 200);  // dimensions, M, efConstruction
+    // hnsw.build(points);
+    // hnsw.printStats();
+
+    HNSWParallel hnsw(k, 16, 200);  // dimensions, M, efConstruction
     hnsw.build(points);
     hnsw.printStats();
 
@@ -109,7 +114,7 @@ int main(){
     for(int i = 0; i < nqp; i++){
         // results[i].lshPoint.print();
         // results[i].kdPoint.print();
-        string difference_filename =  "./onlydifference3.csv";
+        string difference_filename =  "./onlydifference4.csv";
         writeComparisonToCSV(difference_filename, results[i].index, results[i].lsh_dist, results[i].kd_dist, results[i].kdANN_dist, results[i].hnsw_dist);
     }
     
